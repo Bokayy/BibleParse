@@ -46,43 +46,80 @@ void AddWordtoMap(string str, map<string, int> &themap)
 void writeIndex(map<string, int> WordMap) {
 	for (map<string, int>::iterator itr = WordMap.begin();
 		itr != WordMap.end(); ++itr) {
-		std::cout << "\n " << setw(30) << itr->first << setw(10) << itr->second << endl;
+		std::cout << "\n "
+		<< setw(30) << itr->first
+		<< setw(10) << itr->second
+		<< endl;
 	}
 }
 
-string RemoveDelimiters(string &ligma)
+//char alphanumeric()
+//{
+//	int iterator = 0;
+//	char nonalpha[40] = {')' ,'(' ,'!' ,'?','$','\\','.','|',';',':',',','~','@','#', '%','^','&','*','_','+','=','-','{','}','[',']','<','>','/','0','1','2','3','4','5','6','7','8','9','"'};
+//
+//	iterator++;
+//	return nonalpha[iterator];
+//}
+
+void RemoveNonAlphanumeric(string& ligma)
 {
-	for (int i =0; i< ligma.length();i++)
-	{
-		switch (ligma[i])
-		{
-		case(')'):
-		case('('):
-		case('!'):
-		case('?'):
-		case ('\\'):
-		case ('.'):
-		case ('|'):
-		case (';'):
-		case (':'):
-		case (','):
-		case ('0'):
-		case ('1'):
-		case ('2'):
-		case ('3'):
-		case ('4'):
-		case ('5'):
-		case ('6'):
-		case ('7'):
-		case ('8'):
-		case ('9'):
-		//case (39):	//apostrophe, DO NOT UNCOMMENT (writer's)
-		case (34):	//quotation
-			ligma[i] = '\0';
-		}
-	}
-	return ligma;
+	char nonalpha[40] = { ')' ,'(' ,'!' ,'?','$','\\','.','|',';',':',',','~','@','#', '%','^','&','*','_','+','=','-','{','}','[',']','<','>','/','0','1','2','3','4','5','6','7','8','9','"' };
+
+	ligma.erase(remove_if(ligma.begin(), ligma.end(), [](char nonalpha) { return !isalpha(nonalpha); }), ligma.end());
+	//ligma.erase(remove(ligma.begin(), ligma.end(), alphanumeric), ligma.end()); //remove nonalpha[iterator] from string
+
 }
+
+	//for (int i =0; i< ligma.length();i++)
+//{
+//	switch (ligma[i])
+//	{
+//	case(')'):
+//	case('('):
+//	case('!'):
+//	case('?'):
+//	case('$'):
+//	case('\\'):
+//	case('.'):
+//	case('|'):
+//	case(';'):
+//	case(':'):
+//	case (','):
+//	case('~'):
+//	case('@'):
+//	case('#'):
+//	case('%'):
+//	case('^'):
+//	case('&'):
+//	case('*'):
+//	case('_'):
+//	case('+'):
+//	case('='):
+//	case('-'):
+//	case('{'):
+//	case('}'):
+//	case('['):
+//	case(']'):
+//	case('<'):
+//	case('>'):
+//	case('/'):
+//	case('0'):
+//	case('1'):
+//	case('2'):
+//	case('3'):
+//	case('4'):
+//	case('5'):
+//	case('6'):
+//	case('7'):
+//	case('8'):
+//	case('9'):
+//	//case (39):	//apostrophe, DO NOT UNCOMMENT (writer's)
+//	case (34):	//quotation
+//		ligma.erase(ligma[i]);
+//	}
+//}
+
 
 // Function to sort the map according
 // to value in a (key-value) pairs
@@ -106,13 +143,29 @@ void sort(map<string, int>& M)
 	}
 }
 
+ void RemoveEmpty(map<string, int>& map)
+{
+	 string tocheck = "";
+	 for (auto it = map.begin(); it != map.end();)
+	 {
+		 tocheck = it->first;
+		 if (tocheck.empty())
+		 {
+			 it = map.erase(it);
+		 }
+		 else
+		 {
+			 it++;
+		 }
+	 }
+}
+
 
 int main()
 {
 	//string pero = ",pero,";
-	//RemoveDelimiters(pero);
+	//RemoveNonAlphanumeric(pero);
 	//return 0;
-
 	fstream file_stream;
 	file_stream.open(FILETOREAD);
 	vector<string> content;
@@ -130,7 +183,7 @@ int main()
 	} while (!file_stream.eof());
 
 	//izbrisi sve delimitere
-	for_each(content.begin(), content.end(), RemoveDelimiters);
+	for_each(content.begin(), content.end(), RemoveNonAlphanumeric);
 
 	//upis u mapu
 	auto MapPopulationLambda = [&frequency](const string& n)
@@ -149,8 +202,9 @@ int main()
 
 	//populiraj mapu
 	for_each(content.begin(), content.end(), MapPopulationLambda);
+	RemoveEmpty(frequency);
 
-	//ispis mmape
+	//ispis mape
 	//writeIndex(frequency);
 
 	//ispis poredan po values
@@ -158,6 +212,8 @@ int main()
 
 	//ispis broja rijeci
 	/*cout << number_of_words << endl;*/
+
+	//system("pause");
 }
 
 //https://www.gutenberg.org/cache/epub/7999/pg7999.txt
